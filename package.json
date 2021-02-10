@@ -1,0 +1,73 @@
+{
+    "name": "pabcnet-extension",
+    "description": "PascalABC.NET language extension",
+    "author": "Oxana Kostikova",
+    "license": "MIT",
+    "version": "0.0.1",
+    "publisher": "vscode",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Microsoft/vscode-extension-samples"
+    },
+    "engines": {
+        "vscode": "^1.52.0"
+    },
+    "files.associations": {
+        "*.pas": "pascalabcnet"
+    },
+    "activationEvents": [
+        "onLanguage:pascalabcnet"
+    ],
+    "main": "./out/extension",
+    "contributes": {
+        "configuration": {
+            "type": "object",
+            "title": "Example configuration",
+            "properties": {
+                "paslanser.maxNumberOfProblems": {
+                    "scope": "resource",
+                    "type": "number",
+                    "default": 100,
+                    "description": "Controls the maximum number of problems produced by the server."
+                },
+                "paslanser.trace.server": {
+                    "scope": "window",
+                    "type": "string",
+                    "enum": [
+                        "off",
+                        "messages",
+                        "verbose"
+                    ],
+                    "default": "off",
+                    "description": "Traces the communication between VS Code and the language server."
+                }
+            }
+        },
+        "languages": [
+            {
+                "id": "pascalabcnet",
+                "aliases": [
+                    "PascalABC.NET"
+                ],
+                "extensions": [
+                    ".pas"
+                ]
+            }
+        ]
+    },
+    "dependencies": {
+        "vscode-languageclient": "^7.0.0"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.52.0",
+        "vscode-test": "^1.3.0",
+        "@types/node": "^12.12.2",
+        "@types/mocha": "^8.0.3"
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -b",
+        "watch": "tsc -b -w",
+        "test": "sh ./scripts/e2e.sh"
+    }
+}
