@@ -1,9 +1,9 @@
 {
-    "name": "pascalabcnet-extension",
+    "name": "pascalabcnet",
     "description": "PascalABC.NET language extension",
     "author": "Oxana Kostikova",
     "license": "MIT",
-    "version": "0.0.1",
+    "version": "0.0.3",
     "icon": "images/logo.png",
     "publisher": "lereenadem",
     "repository": {
