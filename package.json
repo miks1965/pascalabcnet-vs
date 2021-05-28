@@ -3,7 +3,7 @@
     "description": "PascalABC.NET language extension",
     "author": "Oxana Kostikova",
     "license": "MIT",
-    "version": "0.0.3",
+    "version": "1.0.0",
     "icon": "images/logo.png",
     "publisher": "lereenadem",
     "repository": {
@@ -23,26 +23,7 @@
     "contributes": {
         "configuration": {
             "type": "object",
-            "title": "Example configuration",
-            "properties": {
-                "paslanser.maxNumberOfProblems": {
-                    "scope": "resource",
-                    "type": "number",
-                    "default": 100,
-                    "description": "Controls the maximum number of problems produced by the server."
-                },
-                "paslanser.trace.server": {
-                    "scope": "window",
-                    "type": "string",
-                    "enum": [
-                        "off",
-                        "messages",
-                        "verbose"
-                    ],
-                    "default": "off",
-                    "description": "Traces the communication between VS Code and the language server."
-                }
-            }
+            "title": "Example configuration"
         },
         "configurationDefaults": {
             "[pascalabcnet]": {
@@ -62,7 +43,7 @@
         ]
     },
     "dependencies": {
-        "pascalabcnet-lsp": "^1.0.1",
+        "pascalabcnet-lsp": "^1.0.2",
         "vscode-languageclient": "^7.0.0"
     },
     "devDependencies": {
