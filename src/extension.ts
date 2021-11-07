@@ -1,4 +1,4 @@
-import { workspace, ExtensionContext } from 'vscode';
+import { workspace, ExtensionContext, commands } from 'vscode';
 
 import {
     LanguageClient,
@@ -6,6 +6,8 @@ import {
     ServerOptions,
     TransportKind
 } from 'vscode-languageclient/node';
+
+import * as Compile from './compile';
 
 let client: LanguageClient;
 
@@ -35,6 +37,9 @@ export function activate(context: ExtensionContext) {
             fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
         }
     };
+
+    let command = commands.registerCommand('extension.pabcnet.compileAndRunCurrentTab', Compile.compileAndRunCurrentTab);
+    context.subscriptions.push(command);
 
     // Create the language client and start the client.
     client = new LanguageClient(

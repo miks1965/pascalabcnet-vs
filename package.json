@@ -21,9 +21,30 @@
     ],
     "main": "./out/extension",
     "contributes": {
+        "commands": [
+            {
+                "command": "extension.pabcnet.compileAndRunCurrentTab",
+                "title": "PascalABC.NET: Compile and execute current tab",
+                "icon": "$(play)"
+            }
+        ],
+        "menus": {
+            "editor/title": [
+                {
+                    "command": "extension.pabcnet.compileAndRunCurrentTab",
+                    "when": "resourceLangId == pascalabcnet",
+                    "group": "navigation"
+                }
+            ]
+        },
         "configuration": {
-            "type": "object",
-            "title": "Example configuration"
+            "title": "PascalABC.NET",
+            "properties": {
+                "PascalABC.NET.pathToCompiler": {
+                    "type":"string",
+                    "description": "Path to PascalABC.NET compiler"
+                }
+            }
         },
         "configurationDefaults": {
             "[pascalabcnet]": {
@@ -49,7 +70,7 @@
     "devDependencies": {
         "@types/mocha": "^8.0.3",
         "@types/node": "^12.12.2",
-        "@types/vscode": "^1.52.0",
+        "@types/vscode": "^1.62.0",
         "typescript": "^4.0.2",
         "vscode-test": "^1.3.0"
     },
