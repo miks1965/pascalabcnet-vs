@@ -1,15 +1,15 @@
 import { window, workspace } from 'vscode';
 import * as path from 'path';
 
-const PascalABCCompilerPath = workspace.getConfiguration('PascalABC.NET').pathToCompiler
-
 const terminal = window.createTerminal('PascalABC.NET');
 
 function compile(pathToFile: string) {
+    const PascalABCCompilerPath = workspace.getConfiguration('PascalABC.NET').pathToCompiler
+
     var fileName = path.basename(pathToFile, '.pas');
     var directoryName = path.dirname(pathToFile);
     var executablePath = `${directoryName}/${fileName}.exe`;
-    var compileAndExecuteScript = `${PascalABCCompilerPath} ${pathToFile} && mono \"${executablePath}\"`;
+    var compileAndExecuteScript = `${PascalABCCompilerPath} "${pathToFile}" && "${executablePath}"`;
     
     terminal.show()
     terminal.sendText(compileAndExecuteScript)

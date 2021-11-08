@@ -35,10 +35,11 @@ export function activate(context: ExtensionContext) {
         synchronize: {
             // Notify the server about file changes to '.clientrc files contained in the workspace
             fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
-        }
+        },
+        outputChannelName: 'PascalABC.NET extension'
     };
 
-    let command = commands.registerCommand('extension.pabcnet.compileAndRunCurrentTab', Compile.compileAndRunCurrentTab);
+    let command = commands.registerCommand('extension.pabcnet.compileAndRunCurrentTab', Compile.compileAndRunCurrentTab)
     context.subscriptions.push(command);
 
     // Create the language client and start the client.
