@@ -39,8 +39,13 @@ export function activate(context: ExtensionContext) {
         outputChannelName: 'PascalABC.NET extension'
     };
 
-    let command = commands.registerCommand('extension.pabcnet.compileAndRunCurrentTab', Compile.compileAndRunCurrentTab)
-    context.subscriptions.push(command);
+    let compileAndRunCurrentTabCommand 
+        = commands.registerCommand('extension.pabcnet.compileAndRunCurrentTab', Compile.compileAndRunCurrentTab)
+    let compileCurrentTabCommand 
+        = commands.registerCommand('extension.pabcnet.compileCurrentTab', Compile.compileCurrentTab)
+
+    context.subscriptions.push(compileAndRunCurrentTabCommand);
+    context.subscriptions.push(compileCurrentTabCommand);
 
     // Create the language client and start the client.
     client = new LanguageClient(

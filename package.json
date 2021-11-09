@@ -26,6 +26,11 @@
                 "command": "extension.pabcnet.compileAndRunCurrentTab",
                 "title": "PascalABC.NET: Compile and execute current tab",
                 "icon": "$(play)"
+            },
+            {
+                "command": "extension.pabcnet.compileCurrentTab",
+                "title": "PascalABC.NET: Compile current tab",
+                "icon": "$(gather)"
             }
         ],
         "menus": {
@@ -34,15 +39,22 @@
                     "command": "extension.pabcnet.compileAndRunCurrentTab",
                     "when": "resourceLangId == pascalabcnet",
                     "group": "navigation"
+                },
+                {
+                    "command": "extension.pabcnet.compileCurrentTab",
+                    "when": "resourceLangId == pascalabcnet",
+                    "group": "navigation"
                 }
             ]
         },
         "configuration": {
             "title": "PascalABC.NET",
             "properties": {
-                "PascalABC.NET.pathToCompiler": {
+                "PascalABC.NET.Путь к консольному компилятору": {
+                    "title": "Путь",
                     "type":"string",
-                    "description": "Path to PascalABC.NET compiler"
+                    "markdownDescription": "Для Windows указать путь к консольному компилятору.\n\nДля Linux и MacOS указать команду для запуска компилятора (необходима свежая версия mono). [Справка по установке](http://pascalabc.net/wiki/index.php?title=%D0%9A%D0%B0%D0%BA_%D0%B8%D0%BD%D1%81%D1%82%D0%B0%D0%BB%D0%BB%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C_PascalABC.NET_%D0%BF%D0%BE%D0%B4_Linux)",
+                    "description": ""
                 }
             }
         },
