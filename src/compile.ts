@@ -3,7 +3,17 @@ import * as path from 'path';
 import * as os from 'os'
 
 const currentOs = os.platform()
-const terminal = window.createTerminal('PascalABC.NET')
+
+const terminal = getOrCreateTerminal()
+
+function getOrCreateTerminal() {
+    var foundTerminal = window.terminals.find((x) => x.name === 'PascalABC.NET');
+    if (foundTerminal)
+        return foundTerminal;
+    else {
+        return window.createTerminal('PascalABC.NET');
+    }
+}
 
 function compile(pathToFile: string) {
     const PascalABCCompilerPath = workspace.getConfiguration('PascalABC.NET').get(`Путь к консольному компилятору`)
