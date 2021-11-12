@@ -27,12 +27,12 @@ function compileAndRun(pathToFile: string) {
         return;
     }
 
-    var monoPrefix = currentOs == 'win32' ? '' : 'mono ';
-    var fileName = path.basename(pathToFile, '.pas')
-    var directoryName = path.dirname(pathToFile)
-    var executablePath = `"${directoryName}/${fileName}.exe"`
+    let monoPrefix = currentOs == 'win32' ? '' : 'mono ';
+    let fileName = path.basename(pathToFile, '.pas')
+    let directoryName = path.dirname(pathToFile)
+    let executablePath = currentOs == 'win32' ? `${directoryName}\\${fileName}.exe`.replace(' ', '` ') : `"${directoryName}/${fileName}.exe"`
 
-    var compileAndExecuteScript = `${PascalABCCompilerPath} "${pathToFile}" && ${monoPrefix} ${executablePath}`
+    let compileAndExecuteScript = `${PascalABCCompilerPath} "${pathToFile}"; ${monoPrefix} ${executablePath}`
 
     terminal.show()
     terminal.sendText(compileAndExecuteScript)
