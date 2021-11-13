@@ -30,7 +30,7 @@ function compileAndRun(pathToFile: string) {
     let monoPrefix = currentOs == 'win32' ? '' : 'mono ';
     let fileName = path.basename(pathToFile, '.pas')
     let directoryName = path.dirname(pathToFile)
-    let executablePath = currentOs == 'win32' ? `${directoryName}\\${fileName}.exe`.replace(' ', '` ') : `"${directoryName}/${fileName}.exe"`
+    let executablePath = currentOs == 'win32' ? replaceAll(`${directoryName}\\${fileName}.exe`, ' ', '` ') : `"${directoryName}/${fileName}.exe"`
 
     let compileAndExecuteScript = `${PascalABCCompilerPath} "${pathToFile}"; ${monoPrefix} ${executablePath}`
 
@@ -44,6 +44,10 @@ function getCurrentOpenTabFilePath() {
     return activeEditor === null || activeEditor === void 0
         ? void 0
         : activeEditor.document.fileName;
+}
+
+function replaceAll(str: string, find: string, replace: string) {
+    return str.replace(new RegExp(find, 'g'), replace);
 }
 
 function goToSettings() {
