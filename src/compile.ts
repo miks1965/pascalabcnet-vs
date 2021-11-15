@@ -5,24 +5,28 @@ import * as os from 'os'
 const currentOs = os.platform()
 const terminal = window.createTerminal('PascalABC.NET')
 
-function compile(pathToFile: string) {
-    const PascalABCCompilerPath = workspace.getConfiguration('PascalABC.NET').get(`Путь к консольному компилятору`)
+function compilerPath() {
+    const path: string = workspace.getConfiguration('PascalABC.NET').get(`Путь к консольному компилятору`);
+    
+    return currentOs == 'win32'
+    ? escape(path) 
+    : path
+}
 
-    if (PascalABCCompilerPath == '' || PascalABCCompilerPath == undefined) {
+function compile(pathToFile: string) {
+    if (compilerPath() == '' || compilerPath() == undefined) {
         window.showErrorMessage('Путь к компилятору PascalABC.NET не указан', { title: 'Перейти в настройки', id: 'go' }).then((item) => { if (item.id == "go") goToSettings() })
         return;
     }
 
-    var compileScript = `${PascalABCCompilerPath} "${pathToFile}"`
+    var compileScript = `${compilerPath()} "${pathToFile}"`
 
     terminal.show()
     terminal.sendText(compileScript)
 }
 
 function compileAndRun(pathToFile: string) {
-    const PascalABCCompilerPath = workspace.getConfiguration('PascalABC.NET').get(`Путь к консольному компилятору`)
-
-    if (PascalABCCompilerPath == '' || PascalABCCompilerPath == undefined) {
+     if (compilerPath() == '' || compilerPath() == undefined) {
         window.showErrorMessage('Путь к компилятору PascalABC.NET не указан', { title: 'Перейти в настройки', id: 'go' }).then((item) => { if (item.id == "go") goToSettings() })
         return;
     }
@@ -30,9 +34,9 @@ function compileAndRun(pathToFile: string) {
     let monoPrefix = currentOs == 'win32' ? '' : 'mono ';
     let fileName = path.basename(pathToFile, '.pas')
     let directoryName = path.dirname(pathToFile)
-    let executablePath = currentOs == 'win32' ? replaceAll(`${directoryName}\\${fileName}.exe`, ' ', '` ') : `"${directoryName}/${fileName}.exe"`
+    let executablePath = currentOs == 'win32' ? escape(`${directoryName}\\${fileName}.exe`) : escape(`"${directoryName}/${fileName}.exe"`)
 
-    let compileAndExecuteScript = `${PascalABCCompilerPath} "${pathToFile}"; ${monoPrefix} ${executablePath}`
+    let compileAndExecuteScript = `${compilerPath()} "${pathToFile}"; ${monoPrefix}${executablePath}`
 
     terminal.show()
     terminal.sendText(compileAndExecuteScript)
@@ -48,6 +52,10 @@ function getCurrentOpenTabFilePath() {
 
 function replaceAll(str: string, find: string, replace: string) {
     return str.replace(new RegExp(find, 'g'), replace);
+}
+
+function escape(str: string) {
+    return currentOs == 'win32' ? replaceAll(str, ' ', '` ') : replaceAll(str, ' ', '\ ');
 }
 
 function goToSettings() {
