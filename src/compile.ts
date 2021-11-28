@@ -4,7 +4,7 @@ import * as os from 'os';
 import { TerminalType, determineWindowsTerminalType } from './terminalTypes';
 
 const currentOs = os.platform()
-const terminal = window.createTerminal('PascalABC.NET')
+export const terminal = window.createTerminal('PascalABC.NET')
 
 let terminalKind = currentOs == 'win32' ? determineWindowsTerminalType() : TerminalType.Bash
 
@@ -16,7 +16,7 @@ function checkTerminalValidity() {
     if (terminalKind != TerminalType.Unknown)
         return true
 
-    window.showErrorMessage('Выбран неподдерживаемый тип терминала. Выберите в настройках Command Prompt, PowerShell или Git Bash и перезапустите VSCode', 
+    window.showErrorMessage('Выбран неподдерживаемый тип терминала. Выберите в настройках Command Prompt, PowerShell или Git Bash, после чего VSCode будет перезапущен.', 
         { title: 'Перейти в настройки', id: 'go' }).then((item) => { if (item.id == "go") goToTerminalSettings() })
     return false
 }
@@ -109,7 +109,7 @@ function goToCompilerSettings() {
 }
 
 function goToTerminalSettings() {
-    commands.executeCommand('workbench.action.openSettings', 'terminal.integrated.defaultProfile')
+    commands.executeCommand('workbench.action.openSettings', 'terminal.integrated.defaultProfile.windows')
 }
 
 export function compileCurrentTab() {

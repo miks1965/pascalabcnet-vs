@@ -1,4 +1,4 @@
-import { workspace, ExtensionContext, commands } from 'vscode';
+import { workspace, ExtensionContext, commands, window } from 'vscode';
 
 import {
     LanguageClient,
@@ -39,13 +39,24 @@ export function activate(context: ExtensionContext) {
         outputChannelName: 'PascalABC.NET extension'
     };
 
-    let compileAndRunCurrentTabCommand 
+    let compileAndRunCurrentTabCommand
         = commands.registerCommand('extension.pabcnet.compileAndRunCurrentTab', Compile.compileAndRunCurrentTab)
-    let compileCurrentTabCommand 
+    let compileCurrentTabCommand
         = commands.registerCommand('extension.pabcnet.compileCurrentTab', Compile.compileCurrentTab)
 
     context.subscriptions.push(compileAndRunCurrentTabCommand);
     context.subscriptions.push(compileCurrentTabCommand);
+    
+    Compile.terminal.show();
+    // To avoid duplicating first command
+    commands.executeCommand('workbench.action.terminal.clear')
+
+    workspace.onDidChangeConfiguration(event => {
+        if (event.affectsConfiguration('terminal.integrated.defaultProfile')) {
+            window.terminals.forEach(t => t.dispose())
+            commands.executeCommand("workbench.action.reloadWindow")
+        }
+    })
 
     // Create the language client and start the client.
     client = new LanguageClient(

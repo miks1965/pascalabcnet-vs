@@ -1,4 +1,4 @@
-import { commands, window, workspace } from 'vscode';
+import { workspace } from 'vscode';
 
 export enum TerminalType {
     CMD,
@@ -17,9 +17,14 @@ export function determineWindowsTerminalType(): TerminalType {
         return TerminalType.Unknown
 
     switch (term.toLowerCase()) {
-        case 'command prompt': return TerminalType.CMD
-        case 'powershell': return TerminalType.PowerShell
-        case 'git bash': return TerminalType.Bash
-        default: return TerminalType.Unknown
+        case 'command prompt':
+            return TerminalType.CMD
+        case 'powershell':
+        case 'windows powershell': 
+            return TerminalType.PowerShell
+        case 'git bash': 
+            return TerminalType.Bash
+        default: 
+            return TerminalType.Unknown
     }  
 }
