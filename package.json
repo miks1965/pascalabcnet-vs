@@ -73,6 +73,13 @@
                     ".pas"
                 ]
             }
+        ],
+        "grammars": [
+            {
+                "language": "pascalabcnet",
+                "scopeName": "source.pascal",
+                "path": "./syntaxes/pascal.tmLanguage"
+            }
         ]
     },
     "dependencies": {
