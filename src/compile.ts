@@ -16,7 +16,7 @@ function checkTerminalValidity() {
     if (terminalKind != TerminalType.Unknown)
         return true
 
-    window.showErrorMessage('Выбран неподдерживаемый тип терминала. Выберите в настройках Command Prompt, PowerShell или Git Bash, после чего VSCode будет перезапущен.', 
+    window.showErrorMessage('Выбран неподдерживаемый тип терминала. Выберите в настройках Command Prompt, PowerShell или Git Bash, после чего VSCode будет перезапущен.',
         { title: 'Перейти в настройки', id: 'go' }).then((item) => { if (item.id == "go") goToTerminalSettings() })
     return false
 }
@@ -30,7 +30,8 @@ function getCompilerPath() {
 function compile(pathToFile: string) {
     if (!checkTerminalValidity)
         return;
-    
+
+    window.activeTextEditor.document.save();
     const compilerPath = getCompilerPath()
 
     if (compilerPath == '' || compilerPath == undefined) {
@@ -38,7 +39,7 @@ function compile(pathToFile: string) {
         return;
     }
 
-    var compileScript =  currentOs == 'win32' && terminalKind != TerminalType.PowerShell 
+    var compileScript = currentOs == 'win32' && terminalKind != TerminalType.PowerShell
         ? `"${compilerPath}" "${pathToFile}"`
         : `${compilerPath} "${pathToFile}"`
 
@@ -49,7 +50,8 @@ function compile(pathToFile: string) {
 function compileAndRun(pathToFile: string) {
     if (!checkTerminalValidity())
         return;
-    
+
+    window.activeTextEditor.document.save();
     const compilerPath = getCompilerPath()
 
     if (compilerPath == '' || compilerPath == undefined) {
@@ -63,8 +65,8 @@ function compileAndRun(pathToFile: string) {
     let commandSeparator = getCommandSeparator()
     let executablePath = currentOs == 'win32' ? escape(`${directoryName}\\${fileName}.exe`) : escape(`"${directoryName}/${fileName}.exe"`)
 
-    let compileAndExecuteScript = currentOs == 'win32' && terminalKind != TerminalType.PowerShell 
-        ? `"${compilerPath}" "${pathToFile}"${commandSeparator} "${monoPrefix}${executablePath}"` 
+    let compileAndExecuteScript = currentOs == 'win32' && terminalKind != TerminalType.PowerShell
+        ? `"${compilerPath}" "${pathToFile}"${commandSeparator} "${monoPrefix}${executablePath}"`
         : `${compilerPath} "${pathToFile}"${commandSeparator} ${monoPrefix}${executablePath}`
 
     terminal.show()
@@ -85,21 +87,21 @@ function replaceAll(str: string, find: string, replace: string) {
 
 function escape(str: string) {
     switch (terminalKind) {
-        case TerminalType.PowerShell: 
+        case TerminalType.PowerShell:
             return replaceAll(str, ' ', '` ')
-        case TerminalType.Bash: 
+        case TerminalType.Bash:
             return replaceAll(str, ' ', '\ ')
-        default: 
+        default:
             return str
     }
 }
 
 function getCommandSeparator() {
     switch (terminalKind) {
-        case TerminalType.PowerShell: 
+        case TerminalType.PowerShell:
             return ';'
         case TerminalType.CMD:
-        case TerminalType.Bash: 
+        case TerminalType.Bash:
             return ' &&'
     }
 }
