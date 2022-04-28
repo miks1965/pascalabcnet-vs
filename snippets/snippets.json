@@ -27,6 +27,33 @@
         "prefix": "b",
         "body": "begin\n  ${1:statement};\n  $0\nend;"
     },
+    "[a]nd": {
+        "prefix": "a",
+        "body": "${1:condition} and ${2:condition}"
+    },
+    "&&": {
+        "prefix": "&&",
+        "description": "Alias for `a` snippet.",
+        "body": "${1:condition} and ${2:condition}"
+    },
+    "[o]r": {
+        "prefix": "o",
+        "body": "${1:condition} or ${2:condition}"
+    },
+    "||": {
+        "prefix": "||",
+        "description": "Alias for `o` snippet.",
+        "body": "${1:condition} or ${2:condition}"
+    },
+    "[n]ot": {
+        "prefix": "n",
+        "body": "not ${1:condition}"
+    },
+    "!": {
+        "prefix": "!",
+        "description": "Alias for `n` snippet.",
+        "body": "not ${1:condition}"
+    },
     "[s]imple [if]": {
         "prefix": "sif",
         "body": "if ${1:condition} then ${2:statement};"
