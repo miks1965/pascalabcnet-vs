@@ -168,5 +168,13 @@
     "[c]omplex [fun]ction": {
         "prefix": "cfun",
         "body": "function ${1:name}(): ${2:return-type};\nbegin\n  ${3:statement};\n  $0\nend;"
+    },
+    "[c]lass": {
+        "prefix": "c",
+        "body": "type\n  ${1:name} = class\n    $0\n  end;"
+    },
+    "[r]ecord": {
+        "prefix": "r",
+        "body": "type\n  ${1:name} = record\n    $0\n  end;"
     }
 }
