@@ -152,5 +152,21 @@
         "prefix": "tryfin",
         "description": "Alias for `stryfin` snippet. Provided for simplicity because there is no try-finaly with begin-end.",
         "body": "try\n  ${1:statement};\n  $0\nfinaly\n  ${2:statement};\nend;"
+    },
+    "[s]imple [pro]cedure": {
+        "prefix": "spro",
+        "body": "procedure ${1:name}() := ${2:statement};"
+    },
+    "[c]omplex [pro]cedure": {
+        "prefix": "cpro",
+        "body": "procedure ${1:name}();\nbegin\n  ${2:statement};\n  $0\nend;"
+    },
+    "[s]imple [fun]ction": {
+        "prefix": "sfun",
+        "body": "function ${1:name}() := ${2:statement};"
+    },
+    "[c]omplex [fun]ction": {
+        "prefix": "cfun",
+        "body": "function ${1:name}(): ${2:return-type};\nbegin\n  ${3:statement};\n  $0\nend;"
     }
 }
