@@ -176,5 +176,13 @@
     "[r]ecord": {
         "prefix": "r",
         "body": "type\n  ${1:name} = record\n    $0\n  end;"
+    },
+    "[s]imple [con]structor": {
+        "prefix": "scon",
+        "body": "constructor () := ${1:statement};"
+    },
+    "[c]omplex [con]structor": {
+        "prefix": "ccon",
+        "body": "constructor ();\nbegin\n  ${1:statement};\n  $0\nend;"
     }
 }
