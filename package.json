@@ -73,7 +73,11 @@
                     ".pas"
                 ]
             }
-        ]
+        ],
+        "snippets": [{
+			"language": "pascalabcnet",
+			"path": "./snippets/snippets.json"
+		}]
     },
     "dependencies": {
         "pascalabcnet-lsp": "^1.0.3",

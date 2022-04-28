@@ -1,0 +1,129 @@
+{
+    "comment": {
+        "prefix": "//",
+        "body": "// ${1:text}"
+    },
+    "multiline comment": {
+        "prefix": "{",
+        "body": "{\n${1:text}\n}"
+    },
+    "[d]eclare [var]iable": {
+        "prefix": "dvar",
+        "body": "var ${1:name} := ${2:value};"
+    },
+    "[a]ssign [var]iable": {
+        "prefix": "avar",
+        "body": "${1:name} := ${2:value};"
+    },
+    "[s]wap [var]iables": {
+        "prefix": "svar",
+        "body": "(${1:name}, ${2:name2}) := (${2}, ${1});"
+    },
+    "[d]eclare [con]st": {
+        "prefix": "dcon",
+        "body": "const ${1:name} = ${2:value};"
+    },
+    "[b]egin": {
+        "prefix": "b",
+        "body": "begin\n  ${1:statement};\n  $0\nend;"
+    },
+    "[s]imple [if]": {
+        "prefix": "sif",
+        "body": "if ${1:condition} then ${2:statement};"
+    },
+    "[s]imple [if] [els]e": {
+        "prefix": "sifels",
+        "body": "if ${1:condition} then ${2:statement} else ${3:statement};"
+    },
+    "[c]omplex [if]": {
+        "prefix": "cif",
+        "body": "if ${1:condition} then\nbegin\n  ${2:statement};\n  $0\nend;"
+    },
+    "[c]omplex [if] [els]e": {
+        "prefix": "cifels",
+        "body": "if ${1:condition} then\nbegin\n  ${2:statement};\n  $0\nelse\n  ${2:statement};\nend;"
+    },
+    "[s]imple [cas]e": {
+        "prefix": "scas",
+        "body": "case ${1:expression} of\n  ${2:list}: ${3:statement};\n  $0\nend;"
+    },
+    "[s]imple [cas]e [els]e": {
+        "prefix": "scasels",
+        "body": "case ${1:expression} of\n  ${2:list}: ${3:statement};\n  $0\n  else ${4:statement};\nend;"
+    },
+    "[c]omplex [cas]e": {
+        "prefix": "ccas",
+        "body": "case ${1:expression} of\n  ${2:list}:\n  begin\n    ${3:statement};\n  end;\n  $0\nend;"
+    },
+    "[c]omplex [cas]e [els]e": {
+        "prefix": "ccasels",
+        "body": "case ${1:expression} of\n  ${2:list}:\n  begin\n    ${3:statement};\n  end;\n  $0\n  else\n  begin\n    ${4:statement};\n  end;\nend;"
+    },
+    "[s]imple [for]": {
+        "prefix": "sfor",
+        "body": "for var ${1:variable} := ${2:initial-value} ${3|to,downto|} ${4:last-value} do ${5:statement};"
+    },
+    "[c]omplex [for]": {
+        "prefix": "cfor",
+        "body": "for var ${1:variable} := ${2:initial-value} ${3|to,downto|} ${4:last-value} do\nbegin\n  ${5:statement};\nend;"
+    },
+    "[s]imple [loo]p": {
+        "prefix": "sloo",
+        "body": "loop ${1:count} do ${2:statement};"
+    },
+    "[c]omplex [loo]p": {
+        "prefix": "cloo",
+        "body": "loop ${1:count} do\nbegin\n  ${2:statement};\nend;"
+    },
+    "[s]imple for[eac]h": {
+        "prefix": "seac",
+        "body": "foreach var ${1:item} in ${2:collection} do ${4:statement};"
+    },
+    "[c]omplex for[eac]h": {
+        "prefix": "ceac",
+        "body": "foreach var ${1:item} in ${2:collection} do\nbegin\n  ${3:statement};\nend;"
+    },
+    "[s]imple [whi]le": {
+        "prefix": "swhi",
+        "body": "while ${1:condition} do ${2:statement};"
+    },
+    "[c]omplex [whi]le": {
+        "prefix": "cwhi",
+        "body": "while ${1:condition} do\nbegin\n  ${2:statement};\n  $0\nend;"
+    },
+    "[s]imple [rep]eat": {
+        "prefix": "srep",
+        "body": "repeat\n  ${1:statement};\nuntil ${2:condition};"
+    },
+    "[rep]eat": {
+        "prefix": "rep",
+        "description": "Alias for `srep` snippet. Provided for simplicity because there is no repeat-until with begin-end.",
+        "body": "repeat\n  ${1:statement};\nuntil ${2:condition};"
+    },
+    "[yie]ld": {
+        "prefix": "yie",
+        "body": "yeild ${1:value};"
+    },
+    "[yie]ld [seq]uence": {
+        "prefix": "yieseq",
+        "body": "yeild sequence ${1:value};"
+    },
+    "[s]imple [try] [exc]ept": {
+        "prefix": "stryexc",
+        "body": "try\n  ${1:statement};\n  $0\nexcept\n  ${2:statement};\nend;"
+    },
+    "[try] [exc]ept": {
+        "prefix": "tryexc",
+        "description": "Alias for `stryexc` snippet. Provided for simplicity because there is no try-except with begin-end.",
+        "body": "try\n  ${1:statement};\n  $0\nexcept\n  ${2:statement};\nend;"
+    },
+    "[s]imple [try] [fin]ally": {
+        "prefix": "stryfin",
+        "body": "try\n  ${1:statement};\n  $0\nfinaly\n  ${2:statement};\nend;"
+    },
+    "[try] [fin]ally": {
+        "prefix": "tryfin",
+        "description": "Alias for `stryfin` snippet. Provided for simplicity because there is no try-finaly with begin-end.",
+        "body": "try\n  ${1:statement};\n  $0\nfinaly\n  ${2:statement};\nend;"
+    }
+}
