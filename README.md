@@ -10,12 +10,11 @@ The extension is published in Visual Studio Marketplace and Eclipse Open VSX and
 
 ![Compile and run](/assets/compile-run.gif)
 
-
 ## Features
 
 - Highlighting
 - Autocomplete
 - Compile and run
-
+- Snippets
 
 Uses [PascalABC.NET Language Server](https://github.com/Lereena/pascalabcnet-lsp)
