@@ -1,10 +1,23 @@
-import { commands, window, workspace } from 'vscode';
+import { commands, Terminal, window, workspace } from 'vscode';
 import * as path from 'path';
 import * as os from 'os';
 import { TerminalType, determineWindowsTerminalType } from './terminalTypes';
 
 const currentOs = os.platform()
-export const terminal = window.createTerminal('PascalABC.NET')
+export let terminal: Terminal;
+
+export function createTerminal() {
+    const terminalName = 'PascalABC.NET';
+
+    // Checking if the terminal is already open
+    for (const terminal of window.terminals) {
+        if (terminal.name === terminalName) {
+            return;
+        }
+    }
+
+    terminal = window.createTerminal(terminalName);
+}
 
 let terminalKind = currentOs == 'win32' ? determineWindowsTerminalType() : TerminalType.Bash
 
@@ -28,7 +41,7 @@ function getCompilerPath() {
 }
 
 function compile(pathToFile: string) {
-    if (!checkTerminalValidity)
+    if (!checkTerminalValidity())
         return;
 
     window.activeTextEditor.document.save();
@@ -43,6 +56,7 @@ function compile(pathToFile: string) {
         ? `"${compilerPath}" "${pathToFile}"`
         : `${compilerPath} "${pathToFile}"`
 
+    createTerminal()
     terminal.show()
     terminal.sendText(compileScript)
 }
@@ -69,6 +83,7 @@ function compileAndRun(pathToFile: string) {
         ? `"${compilerPath}" "${pathToFile}"${commandSeparator} "${monoPrefix}${executablePath}"`
         : `${compilerPath} "${pathToFile}"${commandSeparator} ${monoPrefix}${executablePath}`
 
+    createTerminal()
     terminal.show()
     terminal.sendText(compileAndExecuteScript)
 }

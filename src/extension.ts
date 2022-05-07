@@ -46,8 +46,10 @@ export function activate(context: ExtensionContext) {
 
     context.subscriptions.push(compileAndRunCurrentTabCommand);
     context.subscriptions.push(compileCurrentTabCommand);
-    
+
+    Compile.createTerminal();
     Compile.terminal.show();
+
     // To avoid duplicating first command
     commands.executeCommand('workbench.action.terminal.clear')
 
