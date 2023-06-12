@@ -53,13 +53,6 @@ export function activate(context: ExtensionContext) {
     // To avoid duplicating first command
     commands.executeCommand('workbench.action.terminal.clear')
 
-    workspace.onDidChangeConfiguration(event => {
-        if (event.affectsConfiguration('terminal.integrated.defaultProfile')) {
-            window.terminals.forEach(t => t.dispose())
-            commands.executeCommand("workbench.action.reloadWindow")
-        }
-    })
-
     // Create the language client and start the client.
     client = new LanguageClient(
         'pabcnet-server',
