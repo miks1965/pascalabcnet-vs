@@ -2,10 +2,11 @@ import { commands, Terminal, window, workspace } from 'vscode';
 import * as path from 'path';
 import * as os from 'os';
 import { TerminalType, determineWindowsTerminalType } from './terminalTypes';
-import { exec } from 'child_process';
+import { DecorationProvider } from "./marks";
 
 const currentOs = os.platform()
 export let terminal: Terminal;
+let provider: DecorationProvider;
 
 export function createTerminal() {
     const terminalName = 'PascalABC.NET';
@@ -36,31 +37,31 @@ function checkTerminalValidity() {
 }
 
 function getCompilerPath() {
-    const path: string = workspace.getConfiguration('PascalABC.NET').get(`Путь к консольному компилятору`);
+    const path: string = workspace.getConfiguration('PascalABC.NET').get(`Компилятор: Путь к консольному компилятору`);
 
     return escape(path)
 }
 
 function getExeDelete() {
-    const needDelete: boolean = workspace.getConfiguration('PascalABC.NET').get(`Удалять EXE файл после выполнения`);
+    const needDelete: boolean = workspace.getConfiguration('PascalABC.NET').get(`Компилятор: Удалять EXE файл после выполнения`);
 
     return needDelete
 }
 
 function getPdbDelete() {
-    const needDelete: boolean = workspace.getConfiguration('PascalABC.NET').get(`Удалять PDB файл после выполнения`);
+    const needDelete: boolean = workspace.getConfiguration('PascalABC.NET').get(`Компилятор: Удалять PDB файл после выполнения`);
 
     return needDelete
 }
 
 function getDebugMode() {
-    const debugMode: boolean = workspace.getConfiguration('PascalABC.NET').get(`Компилировать DEBUG версию`);
+    const debugMode: boolean = workspace.getConfiguration('PascalABC.NET').get(`Компилятор: Компилировать DEBUG версию`);
 
     return debugMode
 }
 
 function getStandalone() {
-    const standaloneMode: boolean = workspace.getConfiguration('PascalABC.NET').get(`Запуск программы в отдельном окне`);
+    const standaloneMode: boolean = workspace.getConfiguration('PascalABC.NET').get(`Компилятор: Запуск программы в отдельном окне`);
 
     return standaloneMode
 }
@@ -182,20 +183,21 @@ function compile(pathToFile: string) {
     terminal.sendText(compileScript)
 }
 
-function compileAndRun(pathToFile: string) {
+function compileAndRun() {
     if (!checkTerminalValidity())
         return;
 
     window.activeTextEditor.document.save();
 
-    let compileAndExecuteScript = getCompileCommand(pathToFile, true)
+    let pathToFile = getCurrentOpenTabFilePath()
 
+    let compileAndExecuteScript = getCompileCommand(pathToFile, true)
     createTerminal()
     terminal.show()
     terminal.sendText(compileAndExecuteScript)
 }
 
-function getCurrentOpenTabFilePath() {
+export function getCurrentOpenTabFilePath() {
     var activeEditor = window.activeTextEditor
 
     return activeEditor === null || activeEditor === void 0
@@ -229,7 +231,7 @@ function getCommandSeparator() {
 }
 
 function goToCompilerSettings() {
-    commands.executeCommand('workbench.action.openSettings', 'PascalABC.NET.Путь к консольному компилятору')
+    commands.executeCommand('workbench.action.openSettings', 'PascalABC.NET.Компилятор: Путь к консольному компилятору')
 }
 
 function goToTerminalSettings() {
@@ -240,8 +242,20 @@ export function compileCurrentTab() {
     compile(getCurrentOpenTabFilePath())
 }
 
+export function getLogin() {
+    const login: string = workspace.getConfiguration('PascalABC.NET').get(`Задачник: Логин (ФИО)`);
+
+    return login
+}
+
+function getPassword() {
+    const password: string = workspace.getConfiguration('PascalABC.NET').get(`Задачник: Пароль`);
+
+    return password
+}
+
 export function compileAndRunCurrentTab() {
-    compileAndRun(getCurrentOpenTabFilePath())
+    compileAndRun()
 }
 
 exports.compileCurrentTab = compileCurrentTab

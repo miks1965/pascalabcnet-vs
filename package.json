@@ -3,7 +3,7 @@
     "description": "PascalABC.NET language extension",
     "author": "Stepan Pipchenko",
     "license": "MIT",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "icon": "images/logo.png",
     "publisher": "lereenadem",
     "repository": {
@@ -23,6 +23,10 @@
     "contributes": {
         "commands": [
             {
+                "command": "extension.pabcnet.markUnmarkSelectedFile",
+                "title": "Отметить выбранный файл"
+            },
+            {
                 "command": "extension.pabcnet.compileAndRunCurrentTab",
                 "title": "PascalABC.NET: Compile and execute current tab",
                 "icon": "$(play)"
@@ -31,9 +35,25 @@
                 "command": "extension.pabcnet.compileCurrentTab",
                 "title": "PascalABC.NET: Compile current tab",
                 "icon": "$(gather)"
+            },
+            {
+                "command": "extension.pabcnet.showResults",
+                "title": "PascalABC.NET: Show results",
+                "icon": "$(eye)"
+            },
+            {
+                "command": "extension.pabcnet.showRatings",
+                "title": "PascalABC.NET: Show ratings",
+                "icon": "$(mortar-board)"
             }
         ],
         "menus": {
+            "explorer/context": [
+              {
+                "command": "extension.pabcnet.markUnmarkSelectedFile",
+                "group": "Mark/Unmark file"
+              }
+            ],
             "editor/title": [
                 {
                     "command": "extension.pabcnet.compileAndRunCurrentTab",
@@ -44,44 +64,79 @@
                     "command": "extension.pabcnet.compileCurrentTab",
                     "when": "resourceLangId == pascalabcnet",
                     "group": "navigation"
+                },
+                {
+                    "command": "extension.pabcnet.showResults",
+                    "when": "resourceLangId == pascalabcnet",
+                    "group": "navigation"
+                },
+                {
+                    "command": "extension.pabcnet.showRatings",
+                    "when": "resourceLangId == pascalabcnet",
+                    "group": "navigation"
                 }
             ]
         },
         "configuration": {
             "title": "PascalABC.NET",
             "properties": {
-                "PascalABC.NET.Путь к консольному компилятору": {
+                "PascalABC.NET.Компилятор: Путь к консольному компилятору": {
                     "title": "Путь",
                     "type": "string",
                     "markdownDescription": "Для Windows указать путь к консольному компилятору.\n\nДля Linux и MacOS указать команду для запуска компилятора (необходима свежая версия mono). [Справка по установке](http://pascalabc.net/wiki/index.php?title=%D0%9A%D0%B0%D0%BA_%D0%B8%D0%BD%D1%81%D1%82%D0%B0%D0%BB%D0%BB%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C_PascalABC.NET_%D0%BF%D0%BE%D0%B4_Linux)",
                     "description": ""
                 },
-                "PascalABC.NET.Удалять EXE файл после выполнения": {
+                "PascalABC.NET.Компилятор: Удалять EXE файл после выполнения": {
                     "title": "Удалять EXE файл",
                     "type": "boolean",
                     "default": true,
                     "markdownDescription": "Удалять EXE файл после выполнения программы.",
                     "description": ""
                 },
-                "PascalABC.NET.Удалять PDB файл после выполнения": {
+                "PascalABC.NET.Компилятор: Удалять PDB файл после выполнения": {
                     "title": "Удалять PDB файл",
                     "type": "boolean",
                     "default": true,
                     "markdownDescription": "Удалять PDB файл после выполнения программы.",
                     "description": ""
                 },
-                "PascalABC.NET.Компилировать DEBUG версию": {
+                "PascalABC.NET.Компилятор: Компилировать DEBUG версию": {
                     "title": "DEBUG",
                     "type": "boolean",
                     "default": false,
                     "markdownDescription": "Компиляция в DEBUG версии создаёт pdb файл.",
                     "description": ""
                 },
-                "PascalABC.NET.Запуск программы в отдельном окне": {
+                "PascalABC.NET.Компилятор: Запуск программы в отдельном окне": {
                     "title": "Запуск программы в отдельном окне",
                     "type": "boolean",
                     "default": true,
                     "markdownDescription": "Запуск программы в отдельном окне.",
+                    "description": ""
+                },
+                "PascalABC.NET.Задачник: Группа": {
+                    "title": "Группа для отображения информации о заданиях",
+                    "type": "string",
+                    "markdownDescription": "Группа для отображения информации о заданиях.",
+                    "description": ""
+                },
+                "PascalABC.NET.Задачник: Логин (ФИО)": {
+                    "title": "Логин для отправки результата на сервер",
+                    "type": "string",
+                    "markdownDescription": "Логин для отправки результата на сервер.",
+                    "description": ""
+                },
+                "PascalABC.NET.Задачник: Пароль": {
+                    "title": "Пароль для отправки результата на сервер",
+                    "type": "string",
+                    "markdownDescription": "Пароль для отправки результата на сервер.",
+                    "description": ""
+                },
+                "PascalABC.NET.Задачник: Ссылка на ЮФУ сервер": {
+                    "title": "Ссылка для просмотра выполненных заданий",
+                    "type": "string",
+                    "default": "https://air.mmcs.sfedu.ru/pascalabc/",
+                    "markdownDescription": "Ссылка для просмотра выполненных заданий.",
                     "description": ""
                 }
             }
@@ -102,12 +157,16 @@
                 ]
             }
         ],
-        "snippets": [{
-			"language": "pascalabcnet",
-			"path": "./snippets/snippets.json"
-		}]
+        "snippets": [
+            {
+                "language": "pascalabcnet",
+                "path": "./snippets/snippets.json"
+            }
+        ]
     },
     "dependencies": {
+        "iconv-lite": "^0.6.3",
+        "ignore": "^5.2.4",
         "pascalabcnet-lsp": "^1.0.3",
         "vscode-languageclient": "^7.0.0"
     },
@@ -115,8 +174,8 @@
         "@types/mocha": "^8.0.3",
         "@types/node": "^12.12.2",
         "@types/vscode": "^1.62.0",
-        "typescript": "^4.0.2",
-        "@vscode/test-electron": "^1.3.0"
+        "@vscode/test-electron": "^1.3.0",
+        "typescript": "^4.0.2"
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
