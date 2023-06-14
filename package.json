@@ -1,14 +1,14 @@
 {
     "name": "pascalabcnet",
     "description": "PascalABC.NET language extension",
-    "author": "Oxana Kostikova",
+    "author": "Stepan Pipchenko",
     "license": "MIT",
-    "version": "1.1.5",
+    "version": "2.0.0",
     "icon": "images/logo.png",
     "publisher": "lereenadem",
     "repository": {
         "type": "git",
-        "url": "https://github.com/Lereena/pascalabcnet-vs"
+        "url": "https://github.com/WtopaTop/pascalabcnet-vs"
     },
     "engines": {
         "vscode": "^1.62.0"
@@ -55,6 +55,34 @@
                     "type": "string",
                     "markdownDescription": "Для Windows указать путь к консольному компилятору.\n\nДля Linux и MacOS указать команду для запуска компилятора (необходима свежая версия mono). [Справка по установке](http://pascalabc.net/wiki/index.php?title=%D0%9A%D0%B0%D0%BA_%D0%B8%D0%BD%D1%81%D1%82%D0%B0%D0%BB%D0%BB%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D1%82%D1%8C_PascalABC.NET_%D0%BF%D0%BE%D0%B4_Linux)",
                     "description": ""
+                },
+                "PascalABC.NET.Удалять EXE файл после выполнения": {
+                    "title": "Удалять EXE файл",
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Удалять EXE файл после выполнения программы.",
+                    "description": ""
+                },
+                "PascalABC.NET.Удалять PDB файл после выполнения": {
+                    "title": "Удалять PDB файл",
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Удалять PDB файл после выполнения программы.",
+                    "description": ""
+                },
+                "PascalABC.NET.Компилировать DEBUG версию": {
+                    "title": "DEBUG",
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Компиляция в DEBUG версии создаёт pdb файл.",
+                    "description": ""
+                },
+                "PascalABC.NET.Запуск программы в отдельном окне": {
+                    "title": "Запуск программы в отдельном окне",
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Запуск программы в отдельном окне.",
+                    "description": ""
                 }
             }
         },
@@ -88,7 +116,7 @@
         "@types/node": "^12.12.2",
         "@types/vscode": "^1.62.0",
         "typescript": "^4.0.2",
-        "vscode-test": "^1.3.0"
+        "@vscode/test-electron": "^1.3.0"
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

@@ -2,6 +2,7 @@ import { commands, Terminal, window, workspace } from 'vscode';
 import * as path from 'path';
 import * as os from 'os';
 import { TerminalType, determineWindowsTerminalType } from './terminalTypes';
+import { exec } from 'child_process';
 
 const currentOs = os.platform()
 export let terminal: Terminal;
@@ -40,21 +41,141 @@ function getCompilerPath() {
     return escape(path)
 }
 
-function compile(pathToFile: string) {
-    if (!checkTerminalValidity())
-        return;
+function getExeDelete() {
+    const needDelete: boolean = workspace.getConfiguration('PascalABC.NET').get(`Удалять EXE файл после выполнения`);
 
-    window.activeTextEditor.document.save();
-    const compilerPath = getCompilerPath()
+    return needDelete
+}
+
+function getPdbDelete() {
+    const needDelete: boolean = workspace.getConfiguration('PascalABC.NET').get(`Удалять PDB файл после выполнения`);
+
+    return needDelete
+}
+
+function getDebugMode() {
+    const debugMode: boolean = workspace.getConfiguration('PascalABC.NET').get(`Компилировать DEBUG версию`);
+
+    return debugMode
+}
+
+function getStandalone() {
+    const standaloneMode: boolean = workspace.getConfiguration('PascalABC.NET').get(`Запуск программы в отдельном окне`);
+
+    return standaloneMode
+}
+
+
+function getCompileCommand(pathToFile: string, execute: boolean) {
+    let commandSeparator = getCommandSeparator()
+    let monoPrefix = currentOs == 'win32' ? '' : 'mono ';
+    let fileName = path.basename(pathToFile, '.pas')
+    let directoryName = path.dirname(pathToFile)
+    let executablePath = currentOs == 'win32' ? escape(`${directoryName}\\${fileName}.exe`) : escape(`"${directoryName}/${fileName}.exe"`)
+    let pdbPath = currentOs == 'win32' ? escape(`${directoryName}\\${fileName}.pdb`) : escape(`"${directoryName}/${fileName}.pdb"`)
+
+    const compilerPath = getCompilerPath();
+    const needDeleteExe = getExeDelete();
+    const needDeletePdb = getPdbDelete();
+    const debugMode = getDebugMode();
+    const standaloneMode = getStandalone();
+
 
     if (compilerPath == '' || compilerPath == undefined) {
         window.showErrorMessage('Путь к компилятору PascalABC.NET не указан', { title: 'Перейти в настройки', id: 'go' }).then((item) => { if (item.id == "go") goToCompilerSettings() })
         return;
     }
 
-    var compileScript = currentOs == 'win32' && terminalKind != TerminalType.PowerShell
-        ? `"${compilerPath}" "${pathToFile}"`
-        : `${compilerPath} "${pathToFile}"`
+    let compileScript;
+
+    if (currentOs == 'win32') {
+        if (terminalKind == TerminalType.PowerShell) {
+            compileScript = `& "${compilerPath}"`
+            if (debugMode) {
+                compileScript += ` debug=1`
+            }
+            else {
+                compileScript += ` debug=0`
+            }
+            compileScript += ` "${pathToFile}"`;
+            if (execute) {
+                if (standaloneMode) {
+                    compileScript += `${commandSeparator} if(Test-Path "${executablePath}") {start powershell -wait {"${executablePath}"; pause}}`
+                }
+                else {
+                    compileScript += `${commandSeparator} if(Test-Path "${executablePath}") {& "${executablePath}"}`
+                }
+            }
+
+            if (needDeleteExe) {
+                compileScript += `${commandSeparator} Remove-Item -Path "${executablePath}" -erroraction silentlycontinue`
+            }
+            if (needDeletePdb && debugMode) {
+                compileScript += `${commandSeparator} Remove-Item -Path "${pdbPath}" -erroraction silentlycontinue`
+            }
+        }
+        else {
+            compileScript = `"${compilerPath}"`;
+            if (debugMode) {
+                compileScript += ` debug=1`
+            }
+            else {
+                compileScript += ` debug=0`
+            }
+            compileScript += ` "${pathToFile}"`;
+            if (execute) {
+                if (standaloneMode) {
+                    compileScript += `${commandSeparator} IF EXIST "${executablePath}" (start /wait cmd /c "${executablePath}" ^& pause)`
+                }
+                else {
+                    compileScript += `${commandSeparator} IF EXIST "${executablePath}" ("${executablePath}")`
+                }
+            }
+
+            if (needDeleteExe) {
+                compileScript += `${commandSeparator} del "${executablePath}" 2>nul`
+            }
+            if (needDeletePdb && debugMode) {
+                compileScript += `${commandSeparator} del "${pdbPath}" 2>nul`
+            }
+        }
+    }
+    else {
+        compileScript = `${compilerPath}`
+        if(debugMode) {
+            compileScript += ` debug=1`
+        }
+        else {
+            compileScript += ` debug=0`
+        }
+        compileScript += ` "${pathToFile}"`;
+        if (execute) {
+            if (standaloneMode) {
+                compileScript += `${commandSeparator} if [ -f "${executablePath}" ]; then ( gnome-terminal -e "${executablePath}; read -p 'Нажмите Enter, чтобы закрыть окно...'" ) fi`
+            }
+            else {
+                compileScript += `${commandSeparator} if [ -f "${executablePath}" ]; then ( ${monoPrefix}"${executablePath}" ) fi`
+            }
+        }
+
+        if (needDeleteExe) {
+            compileScript += `${commandSeparator} rm -f "${executablePath}"`
+        }
+        if (needDeletePdb && debugMode) {
+            compileScript += `${commandSeparator} rm -f "${pdbPath}"`
+        }
+    }
+
+    return compileScript
+}
+
+function compile(pathToFile: string) {
+    if (!checkTerminalValidity())
+        return;
+
+    window.activeTextEditor.document.save();
+
+    let compileScript = getCompileCommand(pathToFile, false);
 
     createTerminal()
     terminal.show()
@@ -66,22 +187,8 @@ function compileAndRun(pathToFile: string) {
         return;
 
     window.activeTextEditor.document.save();
-    const compilerPath = getCompilerPath()
 
-    if (compilerPath == '' || compilerPath == undefined) {
-        window.showErrorMessage('Путь к компилятору PascalABC.NET не указан', { title: 'Перейти в настройки', id: 'go' }).then((item) => { if (item.id == "go") goToCompilerSettings() })
-        return;
-    }
-
-    let monoPrefix = currentOs == 'win32' ? '' : 'mono ';
-    let fileName = path.basename(pathToFile, '.pas')
-    let directoryName = path.dirname(pathToFile)
-    let commandSeparator = getCommandSeparator()
-    let executablePath = currentOs == 'win32' ? escape(`${directoryName}\\${fileName}.exe`) : escape(`"${directoryName}/${fileName}.exe"`)
-
-    let compileAndExecuteScript = currentOs == 'win32' && terminalKind != TerminalType.PowerShell
-        ? `"${compilerPath}" "${pathToFile}"${commandSeparator} "${monoPrefix}${executablePath}"`
-        : `${compilerPath} "${pathToFile}"${commandSeparator} ${monoPrefix}${executablePath}`
+    let compileAndExecuteScript = getCompileCommand(pathToFile, true)
 
     createTerminal()
     terminal.show()
