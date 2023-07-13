@@ -1,4 +1,4 @@
-import { workspace, ExtensionContext, commands, window } from 'vscode';
+import { window, workspace, ExtensionContext, commands, Uri, Memento } from 'vscode';
 
 import {
     LanguageClient,
@@ -8,18 +8,24 @@ import {
 } from 'vscode-languageclient/node';
 
 import * as Compile from './compile';
+import { showResults, showRating } from './serverInfo';
+import { DecorationProvider } from "./marks";
 
+let provider: DecorationProvider;
+let storage: Memento;
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
-    // The server is implemented in node
+    storage = context.workspaceState;
+
+    provider = new DecorationProvider();
+    context.subscriptions.push(
+      window.registerFileDecorationProvider(provider)
+    );
+
     let serverModule = `${__dirname}/../node_modules/pascalabcnet-lsp/out/server.js`
-    // The debug options for the server
-    // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
     let debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
 
-    // If the extension is launched in debug mode then the debug server options are used
-    // Otherwise the run options are used
     let serverOptions: ServerOptions = {
         run: { module: serverModule, transport: TransportKind.ipc },
         debug: {
@@ -29,11 +35,9 @@ export function activate(context: ExtensionContext) {
         }
     };
 
-    // Options to control the language client
     let clientOptions: LanguageClientOptions = {
         documentSelector: [{ scheme: 'file', language: 'pascalabcnet' }],
         synchronize: {
-            // Notify the server about file changes to '.clientrc files contained in the workspace
             fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
         },
         outputChannelName: 'PascalABC.NET extension'
@@ -43,17 +47,38 @@ export function activate(context: ExtensionContext) {
         = commands.registerCommand('extension.pabcnet.compileAndRunCurrentTab', Compile.compileAndRunCurrentTab)
     let compileCurrentTabCommand
         = commands.registerCommand('extension.pabcnet.compileCurrentTab', Compile.compileCurrentTab)
+    let showResultsCommand
+        = commands.registerCommand('extension.pabcnet.showResults', showResults)
+    let showRatingCommand
+        = commands.registerCommand('extension.pabcnet.showRatings', showRating)
+    let markFileCommand
+        = commands.registerCommand("extension.pabcnet.markUnmarkSelectedFile", async (clickedFile: Uri, selectedFiles: Uri[]) => {
+              provider.markOrUnmarkFiles(selectedFiles);
+            }
+          )
+
+    let renameHandeFileCommand = workspace.onDidRenameFiles(async (rename) => {
+        if (rename.files.length === 0) {
+          return;
+        }
+  
+        for (const file of rename.files) {
+          provider.handleFileRename(file.oldUri, file.newUri);
+        }
+      })
 
     context.subscriptions.push(compileAndRunCurrentTabCommand);
     context.subscriptions.push(compileCurrentTabCommand);
+    context.subscriptions.push(showResultsCommand);
+    context.subscriptions.push(showRatingCommand);
+    context.subscriptions.push(markFileCommand);
+    context.subscriptions.push(renameHandeFileCommand);
 
     Compile.createTerminal();
     Compile.terminal.show();
 
-    // To avoid duplicating first command
     commands.executeCommand('workbench.action.terminal.clear')
 
-    // Create the language client and start the client.
     client = new LanguageClient(
         'pabcnet-server',
         'PascalABC.NET Server',
@@ -61,7 +86,6 @@ export function activate(context: ExtensionContext) {
         clientOptions
     );
 
-    // Start the client. This will also launch the server
     client.start();
 }
 
@@ -71,3 +95,7 @@ export function deactivate(): Thenable<void> | undefined {
     }
     return client.stop();
 }
+
+export const getStorage = () => {
+    return storage;
+};
